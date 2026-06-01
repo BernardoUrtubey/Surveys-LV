@@ -1,5 +1,3 @@
-Perfecto, `app.py` está creado. Ahora el `pdf_generator.py` — click en **"Add file"** → **"Create new file"**, nombre `pdf_generator.py` y pegá este contenido:Acá está el contenido completo. Click en **"Add file"** → **"Create new file"**, nombre `pdf_generator.py` y pegá todo esto:
-
 ```python
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
