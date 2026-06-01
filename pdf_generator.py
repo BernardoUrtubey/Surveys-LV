@@ -362,6 +362,3 @@ def generate_survey_pdf(data, lang='es'):
     cv.save()
     buf.seek(0)
     return buf.read()
-```
-
-Click **"Commit changes"** y avisame. ¡Ya casi está!
