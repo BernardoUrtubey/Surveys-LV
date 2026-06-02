@@ -480,6 +480,90 @@ def generate_survey_pdf(data, lang='es'):
         y -= 6
         draw_notes(cv, y, notes, lbl)
 
+    # Photos page
+    photos = data.get('photos', [])
+    if photos:
+        draw_photos_page(cv, photos, lbl, data, page_num)
+
     cv.save()
     buf.seek(0)
     return buf.read()
+
+
+def draw_photos_page(cv, photos, lbl, data, page_num):
+    """Draw a dedicated photos page at the end of the PDF."""
+    import base64
+    from PIL import Image as PILImage
+
+    cv.showPage()
+    page_num += 1
+    draw_page_bg(cv)
+    draw_watermark(cv)
+    draw_header(cv, data, lbl)
+    draw_footer(cv, lbl, page_num)
+
+    # Section header
+    y = H - 133.6 - 6
+    hdr_h = 17
+    cv.setFillColor(DARK_NAV)
+    cv.rect(45.4, y - hdr_h, 504.5, hdr_h, fill=1, stroke=0)
+    cv.setFillColor(WHITE)
+    cv.setFont("Helvetica-Bold", 7.5)
+    label = "FOTOS DEL RELEVAMIENTO" if lbl.get('page') == 'Pag.' else "SURVEY PHOTOS"
+    cv.drawString(53.4, y - 12, label)
+    y -= hdr_h + 12
+
+    # Photos grid: 2 per row
+    photo_w = 240
+    photo_h = 170
+    margin_x = 45.4
+    gap = 14
+    col = 0
+    x = margin_x
+
+    for photo in photos:
+        try:
+            img_data = base64.b64decode(photo.get('base64', ''))
+            img_buf = io.BytesIO(img_data)
+
+            # Check if we need a new page
+            if y - photo_h < 45:
+                cv.showPage()
+                page_num += 1
+                draw_page_bg(cv)
+                draw_watermark(cv)
+                draw_header(cv, data, lbl)
+                draw_footer(cv, lbl, page_num)
+                y = H - 133.6 - 6
+                col = 0
+                x = margin_x
+
+            # Draw photo with border
+            cv.setStrokeColor(SEP_GRAY)
+            cv.setLineWidth(0.5)
+            cv.rect(x, y - photo_h, photo_w, photo_h, fill=0, stroke=1)
+            # Save temp file for reportlab
+            import tempfile
+            suffix = '.jpg' if 'jpeg' in photo.get('mime','') else '.png'
+            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+                tmp.write(img_data)
+                tmp_path = tmp.name
+            cv.drawImage(tmp_path, x + 2, y - photo_h + 2,
+                        width=photo_w - 4, height=photo_h - 4,
+                        preserveAspectRatio=True, anchor='c')
+            import os as _os
+            _os.unlink(tmp_path)
+
+            col += 1
+            if col >= 2:
+                col = 0
+                x = margin_x
+                y -= photo_h + gap
+            else:
+                x = margin_x + photo_w + gap
+
+        except Exception as e:
+            print(f"Photo error: {e}")
+            continue
+
+    return page_num
