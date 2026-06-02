@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lift Van International — Survey Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f5f5f5;
+      color: #111827;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #7B1212;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    header h1 {
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    header span {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.85rem;
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 860px;
+      margin: 32px auto;
+      padding: 0 16px 60px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .card-header {
+      background: #111827;
+      color: white;
+      padding: 12px 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-header .dot {
+      width: 4px;
+      height: 16px;
+      background: #C0392B;
+      border-radius: 2px;
+    }
+    .card-body {
+      padding: 20px;
+    }
+
+    /* ── Grid ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    .span-2 { grid-column: span 2; }
+
+    /* ── Form fields ── */
+    label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #6B7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid #E5E7EB;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #111827;
+      background: #FAFAFA;
+      transition: border 0.2s;
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: #C0392B;
+      background: white;
+    }
+    textarea { resize: vertical; min-height: 60px; }
+
+    /* ── Room builder ── */
+    .room-block {
+      border: 1.5px solid #E5E7EB;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+    .room-block-header {
+      background: #F9FAFB;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .room-block-header input {
+      flex: 1;
+      background: white;
+      font-weight: 600;
+    }
+    .room-block-body { padding: 12px 14px; }
+
+    .items-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .item-tag {
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      color: #7B1212;
+      border-radius: 20px;
+      padding: 4px 10px 4px 12px;
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .item-tag button {
+      background: none;
+      border: none;
+      color: #C0392B;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0;
+    }
+    .add-item-row {
+      display: flex;
+      gap: 8px;
+    }
+    .add-item-row input { flex: 1; }
+
+    /* ── Crates ── */
+    .crate-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    /* ── Notes ── */
+    .note-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: 9px 18px;
+      border-radius: 6px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #C0392B;
+      color: white;
+    }
+    .btn-primary:hover { background: #A93226; }
+    .btn-secondary {
+      background: #F3F4F6;
+      color: #374151;
+      border: 1.5px solid #D1D5DB;
+    }
+    .btn-secondary:hover { background: #E5E7EB; }
+    .btn-danger {
+      background: none;
+      color: #C0392B;
+      border: none;
+      font-size: 1.2rem;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+    .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+
+    /* ── Generate section ── */
+    .generate-section {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      padding: 24px;
+      text-align: center;
+    }
+    .generate-section h3 {
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+    .generate-section p {
+      color: #6B7280;
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
+    .btn-generate {
+      background: #7B1212;
+      color: white;
+      padding: 13px 32px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      margin: 0 8px;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-generate:hover { background: #5a0d0d; transform: translateY(-1px); }
+    .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* ── Loading ── */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Error ── */
+    .error-msg {
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      color: #7B1212;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      margin-top: 12px;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .span-2 { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Lift Van International</h1>
+    <span>Generador de Survey Reports</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- DATOS GENERALES -->
+  <div class="card">
+    <div class="card-header"><div class="dot"></div>Datos Generales</div>
+    <div class="card-body">
+      <div class="grid-2" style="margin-bottom:14px">
+        <div>
+          <label>Cliente *</label>
+          <input id="client" type="text" placeholder="Nombre completo del cliente" />
+        </div>
+        <div>
+          <label>Destino *</label>
+          <input id="destination" type="text" placeholder="Ej: Florianópolis, Brasil" />
+        </div>
+        <div>
+          <label>Detalle destino</label>
+          <input id="destination_detail" type="text" placeholder="Ej: Florianópolis, Brasil — vía marítima" />
+        </div>
+        <div>
+          <label>Nacionalidad</label>
+          <input id="nationality" type="text" placeholder="Ej: Colombiana · 5 años en Argentina" />
+        </div>
+        <div>
+          <label>Fecha Relevamiento *</label>
+          <input id="survey_date" type="text" placeholder="Ej: 08/05/2026" />
+        </div>
+        <div>
+          <label>Fecha Embalaje *</label>
+          <input id="packing_date" type="text" placeholder="Ej: 09/06/2026" />
+        </div>
+        <div>
+          <label>Duración embalaje</label>
+          <input id="packing_days" type="text" placeholder="Ej: 2 días" />
+        </div>
+        <div>
+          <label>Franquicia</label>
+          <input id="allowance" type="text" placeholder="Ej: A confirmar" />
+        </div>
+        <div class="span-2">
+          <label>Antecedente</label>
+          <input id="background" type="text" placeholder="Ej: Trajo mudanza vía marítima desde Australia (2022)" />
+        </div>
+      </div>
+      <div class="grid-3">
+        <div>
+          <label>Volumen estimado *</label>
+          <input id="volume" type="text" placeholder="Ej: 45 m³" />
+        </div>
+        <div>
+          <label>Contenedor *</label>
+          <input id="container" type="text" placeholder="Ej: 1×40'" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVENTARIO POR AMBIENTE -->
+  <div class="card">
+    <div class="card-header"><div class="dot"></div>Inventario por Ambiente</div>
+    <div class="card-body">
+      <div id="rooms-container"></div>
+      <button class="btn btn-secondary btn-sm" onclick="addRoom()">+ Agregar Ambiente</button>
+    </div>
+  </div>
+
+  <!-- ESQUELETOS -->
+  <div class="card">
+    <div class="card-header"><div class="dot"></div>Esqueletos / Embalajes Especiales</div>
+    <div class="card-body">
+      <div id="crates-container"></div>
+      <button class="btn btn-secondary btn-sm" onclick="addCrate()">+ Agregar Ítem</button>
+    </div>
+  </div>
+
+  <!-- NOTAS OPERATIVAS -->
+  <div class="card">
+    <div class="card-header"><div class="dot"></div>Notas Operativas</div>
+    <div class="card-body">
+      <div id="notes-container"></div>
+      <button class="btn btn-secondary btn-sm" onclick="addNote()">+ Agregar Nota</button>
+    </div>
+  </div>
+
+  <!-- FOTOS -->
+  <div class="card">
+    <div class="card-header"><div class="dot"></div>Fotos del Relevamiento</div>
+    <div class="card-body">
+      <p style="color:#6B7280; font-size:0.83rem; margin-bottom:12px">Agregá fotos de la entrada, items especiales o cualquier referencia util. Aparecerán al final del PDF.</p>
+      <div id="photos-preview" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px"></div>
+      <label for="photo-input" class="btn btn-secondary btn-sm" style="cursor:pointer; display:inline-block;">
+        + Agregar Fotos
+      </label>
+      <input type="file" id="photo-input" accept="image/*" multiple style="display:none"
+        onchange="handlePhotos(this.files)" />
+    </div>
+  </div>
+
+  <!-- GENERAR -->
+  <div class="generate-section">
+    <h3>Generar Informe de Survey</h3>
+    <p>Se generarán dos PDFs: uno en español y uno en inglés con el diseño oficial de Lift Van International.</p>
+    <div>
+      <button class="btn-generate" id="btn-es" onclick="generate('es')">
+        <span>🇦🇷</span> Descargar en Español
+      </button>
+      <button class="btn-generate" id="btn-en" onclick="generate('en')">
+        <span>🇺🇸</span> Descargar en English
+      </button>
+    </div>
+    <div style="margin-top:14px">
+      <button class="btn-generate" id="btn-backup" onclick="generateBackup()" style="background:#374151; font-size:0.82rem; padding:10px 22px;">
+        <span>💾</span> Descargar Respaldo (PDF simple)
+      </button>
+    </div>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+
+</div>
+
+<script>
+
+  // Photos
+  let photos = [];
+
+  function handlePhotos(files) {
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const base64 = e.target.result.split(',')[1];
+        photos.push({ name: file.name, base64, mime: file.type });
+        renderPhotos();
+      };
+      reader.readAsDataURL(file);
+    });
+    document.getElementById('photo-input').value = '';
+  }
+
+  function removePhoto(idx) {
+    photos.splice(idx, 1);
+    renderPhotos();
+  }
+
+  function renderPhotos() {
+    const container = document.getElementById('photos-preview');
+    container.innerHTML = photos.map((p, i) => `
+      <div style="position:relative; display:inline-block;">
+        <img src="data:${p.mime};base64,${p.base64}"
+          style="width:120px; height:90px; object-fit:cover; border-radius:6px; border:1.5px solid #E5E7EB;" />
+        <button onclick="removePhoto(${i})"
+          style="position:absolute; top:-6px; right:-6px; background:#C0392B; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px; line-height:1;">x</button>
+      </div>
+    `).join('');
+  }
+
+  // ── Config ──────────────────────────────────────────────────────────────────
+  // Replace with your Render backend URL after deploying
+  const BACKEND_URL = 'https://liftvan-survey-api.onrender.com';
+
+  // ── Rooms ───────────────────────────────────────────────────────────────────
+  let rooms = [];
+  let roomCounter = 0;
+
+  const defaultRooms = [
+    'Cocina', 'Lavadero', 'Garage', 'Comedor', 'Living',
+    'Dormitorio Principal', 'Dormitorio 2', 'Dormitorio 3'
+  ];
+
+  function addRoom(name = '') {
+    const id = roomCounter++;
+    rooms.push({ id, name, items: [] });
+    renderRooms();
+  }
+
+  function removeRoom(id) {
+    rooms = rooms.filter(r => r.id !== id);
+    renderRooms();
+  }
+
+  function addItem(roomId, val) {
+    if (!val.trim()) return;
+    const room = rooms.find(r => r.id === roomId);
+    if (room) { room.items.push(val.trim()); renderRooms(); }
+  }
+
+  function removeItem(roomId, idx) {
+    const room = rooms.find(r => r.id === roomId);
+    if (room) { room.items.splice(idx, 1); renderRooms(); }
+  }
+
+  function renderRooms() {
+    const container = document.getElementById('rooms-container');
+    container.innerHTML = rooms.map(room => `
+      <div class="room-block">
+        <div class="room-block-header">
+          <input type="text" placeholder="Nombre del ambiente" value="${room.name}"
+            onchange="rooms.find(r=>r.id===${room.id}).name=this.value" />
+          <button class="btn-danger" onclick="removeRoom(${room.id})">×</button>
+        </div>
+        <div class="room-block-body">
+          <div class="items-grid">
+            ${room.items.map((item, i) => `
+              <span class="item-tag">
+                ${item}
+                <button onclick="removeItem(${room.id}, ${i})">×</button>
+              </span>
+            `).join('')}
+          </div>
+          <div class="add-item-row">
+            <input type="text" id="item-input-${room.id}" placeholder="Agregar ítem..." 
+              onkeydown="if(event.key==='Enter'){addItem(${room.id}, this.value); this.value='';}" />
+            <button class="btn btn-secondary btn-sm"
+              onclick="const inp=document.getElementById('item-input-${room.id}'); addItem(${room.id}, inp.value); inp.value='';">
+              Agregar
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Pre-load default rooms
+  defaultRooms.forEach(name => addRoom(name));
+
+  // ── Crates ──────────────────────────────────────────────────────────────────
+  let crates = [];
+  let crateCounter = 0;
+
+  function addCrate() {
+    const id = crateCounter++;
+    crates.push({ id, name: '', status: '' });
+    renderCrates();
+  }
+
+  function removeCrate(id) {
+    crates = crates.filter(c => c.id !== id);
+    renderCrates();
+  }
+
+  function renderCrates() {
+    const container = document.getElementById('crates-container');
+    container.innerHTML = crates.map(c => `
+      <div class="crate-row">
+        <input type="text" placeholder="Ej: TV LED" value="${c.name}"
+          onchange="crates.find(x=>x.id===${c.id}).name=this.value" />
+        <input type="text" placeholder="Ej: A medir / Sin medidas" value="${c.status}"
+          onchange="crates.find(x=>x.id===${c.id}).status=this.value" />
+        <button class="btn-danger" onclick="removeCrate(${c.id})">×</button>
+      </div>
+    `).join('');
+  }
+
+  // ── Notes ───────────────────────────────────────────────────────────────────
+  let notes = [];
+  let noteCounter = 0;
+
+  function addNote() {
+    const id = noteCounter++;
+    notes.push({ id, text: '' });
+    renderNotes();
+  }
+
+  function removeNote(id) {
+    notes = notes.filter(n => n.id !== id);
+    renderNotes();
+  }
+
+  function renderNotes() {
+    const container = document.getElementById('notes-container');
+    container.innerHTML = notes.map(n => `
+      <div class="note-row">
+        <input type="text" placeholder="Nota operativa..." value="${n.text}"
+          onchange="notes.find(x=>x.id===${n.id}).text=this.value" />
+        <button class="btn-danger" onclick="removeNote(${n.id})">×</button>
+      </div>
+    `).join('');
+  }
+
+  // ── Generate ─────────────────────────────────────────────────────────────────
+  async function generate(lang) {
+    const errorEl = document.getElementById('error-msg');
+    errorEl.style.display = 'none';
+
+    const client = document.getElementById('client').value.trim();
+    if (!client) { showError('El nombre del cliente es obligatorio.'); return; }
+
+    const payload = {
+      client,
+      destination:        document.getElementById('destination').value.trim(),
+      destination_detail: document.getElementById('destination_detail').value.trim(),
+      nationality:        document.getElementById('nationality').value.trim(),
+      survey_date:        document.getElementById('survey_date').value.trim(),
+      packing_date:       document.getElementById('packing_date').value.trim(),
+      packing_days:       document.getElementById('packing_days').value.trim(),
+      allowance:          document.getElementById('allowance').value.trim(),
+      background:         document.getElementById('background').value.trim(),
+      volume:             document.getElementById('volume').value.trim(),
+      container:          document.getElementById('container').value.trim(),
+      rooms: rooms.filter(r => r.name || r.items.length).map(r => ({
+        name: r.name,
+        items: r.items
+      })),
+      crates: crates.filter(c => c.name).map(c => ({ name: c.name, status: c.status })),
+      notes: notes.filter(n => n.text).map(n => n.text),
+      photos: photos.map(p => ({ base64: p.base64, mime: p.mime, name: p.name })),
+    };
+
+    const btnId = lang === 'es' ? 'btn-es' : 'btn-en';
+    const btn = document.getElementById(btnId);
+    const origHTML = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner"></span> Generando...`;
+
+    try {
+      const resp = await fetch(`${BACKEND_URL}/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...payload, lang })
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json();
+        throw new Error(err.error || 'Error del servidor');
+      }
+
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${client.replace(/\s+/g,'_')}_Survey_${lang.toUpperCase()}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+    } catch (err) {
+      showError(`Error: ${err.message}`);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = origHTML;
+    }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function generateBackup() {
+    const client = document.getElementById('client').value.trim() || 'Cliente';
+    const lines = [];
+    lines.push('LIFT VAN INTERNATIONAL - INFORME DE SURVEY');
+    lines.push('='.repeat(50));
+    lines.push('');
+    lines.push('DATOS GENERALES');
+    lines.push('-'.repeat(30));
+    lines.push('Cliente: ' + (document.getElementById('client').value || '-'));
+    lines.push('Destino: ' + (document.getElementById('destination').value || '-'));
+    lines.push('Detalle destino: ' + (document.getElementById('destination_detail').value || '-'));
+    lines.push('Nacionalidad: ' + (document.getElementById('nationality').value || '-'));
+    lines.push('Fecha Relevamiento: ' + (document.getElementById('survey_date').value || '-'));
+    lines.push('Fecha Embalaje: ' + (document.getElementById('packing_date').value || '-'));
+    lines.push('Duracion: ' + (document.getElementById('packing_days').value || '-'));
+    lines.push('Franquicia: ' + (document.getElementById('allowance').value || '-'));
+    lines.push('Antecedente: ' + (document.getElementById('background').value || '-'));
+    lines.push('Volumen: ' + (document.getElementById('volume').value || '-'));
+    lines.push('Contenedor: ' + (document.getElementById('container').value || '-'));
+    lines.push('');
+    lines.push('INVENTARIO POR AMBIENTE');
+    lines.push('-'.repeat(30));
+    rooms.forEach(r => {
+      if (r.name || r.items.length) {
+        lines.push('');
+        lines.push('[' + (r.name || 'Sin nombre') + ']');
+        r.items.forEach(item => lines.push('  - ' + item));
+      }
+    });
+    if (crates.length) {
+      lines.push('');
+      lines.push('ESQUELETOS / EMBALAJES ESPECIALES');
+      lines.push('-'.repeat(30));
+      crates.forEach(c => {
+        if (c.name) lines.push('  - ' + c.name + ': ' + c.status);
+      });
+    }
+    if (notes.length) {
+      lines.push('');
+      lines.push('NOTAS OPERATIVAS');
+      lines.push('-'.repeat(30));
+      notes.forEach(n => { if (n.text) lines.push('  * ' + n.text); });
+    }
+    lines.push('');
+    lines.push('Lift Van International | sales@liftvan.com | liftvan.com | +54 11 4016-1100');
+
+    const text = lines.join('\n');
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = client.replace(/\s+/g,'_') + '_Survey_Respaldo.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+</script>
+
+</body>
+</html>
